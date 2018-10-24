@@ -74,7 +74,8 @@ def enhance_images(inbag,outbag,        \
     clahe = cv2.createCLAHE(clipLimit=1.0, tileGridSize=(2,2))
     map1, map2 = load_params(yamlPath)
 
-
+    waitingAnimation = "|/-\\"
+    ind = 0
     bridge = CvBridge()
     for topic, msg, t in rosbag.Bag(inbag,'r').read_messages():
         if topic in camTopics:
@@ -91,13 +92,13 @@ def enhance_images(inbag,outbag,        \
             undistorted_img = cv2.remap(cv_image, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
             enhanced_img = clahe.apply(undistorted_img)        
             imShape2 = enhanced_img.shape
-            
-
+            print(waitingAnimation[int(ind%len(waitingAnimation))],end="\r")
+            ind+=0.002
             msg = bridge.cv2_to_imgmsg(cv_image, "mono8")
             outbag.write(topic,msg,t)
         else:
             outbag.write(topic,msg,t)
-
+    print("Done")
     rospy.loginfo('Closing output bagfile and exiting...')
     outbag.close()
 
