@@ -94,7 +94,9 @@ def enhance_images(inbag,outbag,        \
             imShape2 = enhanced_img.shape
             print(waitingAnimation[int(ind%len(waitingAnimation))],end="\r")
             ind+=0.002
-            msg = bridge.cv2_to_imgmsg(cv_image, "mono8")
+            newMsg = bridge.cv2_to_imgmsg(cv_image, "mono8")
+
+            msg.data = newMsg.data
             outbag.write(topic,msg,t)
         else:
             outbag.write(topic,msg,t)
@@ -115,10 +117,11 @@ if __name__=="__main__":
                                                  'for Perceptin')
     parser.add_argument('--inbag',help='input bagfile')
     parser.add_argument('--outbag',help='output bagfile')
+    parser.add_argument('--yaml',help='yaml kalibr config')
     args = parser.parse_args()
 
     try:
-        enhance_images(args.inbag,args.outbag)
+        enhance_images(args.inbag,args.outbag, yamlPath=args.yaml)
     except (Exception):
         print("Encountered error while undistorting:")
         import traceback
