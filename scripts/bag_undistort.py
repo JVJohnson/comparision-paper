@@ -94,10 +94,10 @@ def enhance_images(inbag,outbag,        \
             imShape2 = enhanced_img.shape
             print(waitingAnimation[int(ind%len(waitingAnimation))],end="\r")
             ind+=0.002
-            newMsg = bridge.cv2_to_imgmsg(cv_image, "mono8")
+            newMsg = bridge.cv2_to_imgmsg(enhanced_img, "mono8")
+            newMsg.header = msg.header
 
-            msg.data = newMsg.data
-            outbag.write(topic,msg,t)
+            outbag.write(topic,newMsg,t)
         else:
             outbag.write(topic,msg,t)
     print("Done")
